@@ -1,11 +1,7 @@
 part of 'search_cubit.dart';
 
 @immutable
-abstract class SearchState extends Equatable {
-  const SearchState();
-  @override
-  List<Object> get props => [];
-}
+abstract class SearchState {}
 
 class SearchInitial extends SearchState {}
 class StartWelcomeAudio extends SearchState {}
@@ -26,5 +22,5 @@ class AudioPlaying extends SearchState {}
 class AudioPlayed extends SearchState {}
 class SearchingError extends SearchState {
   final String message;
-  const SearchingError({required this.message});
+  SearchingError({required this.message});
 }

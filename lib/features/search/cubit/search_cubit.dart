@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:ebsar2/core/constants/app_string.dart';
 import 'package:ebsar2/core/models/book_model.dart';
+import 'package:ebsar2/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -17,21 +18,21 @@ class SearchCubit extends Cubit<SearchState> {
 
   bool searchingIcon = false;
 
-  List<BookModel> books = [];
+  List<BookModel> books = GetBooks.books;
 
-  Future<List<BookModel>> getBooks() async {
-    try {
-      Uri url = Uri.parse('https://ebsar.website/api/books');
-      http.Response response = await http.get(url);
-      var data = jsonDecode(response.body);
-      data['data'].forEach((element) {
-        books.add(BookModel.fromJson(element));
-      });
-    } catch (error) {
-      print('the $error');
-    }
-    return books;
-  }
+  // Future<List<BookModel>> getBooks() async {
+  //   try {
+  //     Uri url = Uri.parse('https://ebsar.website/api/books');
+  //     http.Response response = await http.get(url);
+  //     var data = jsonDecode(response.body);
+  //     data['data'].forEach((element) {
+  //       books.add(BookModel.fromJson(element));
+  //     });
+  //   } catch (error) {
+  //     print('the $error');
+  //   }
+  //   return books;
+  // }
 
   AudioPlayer audioPlayer = AudioPlayer();
   bool isListening = false;

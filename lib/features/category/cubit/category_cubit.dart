@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:ebsar2/core/constants/app_string.dart';
 import 'package:ebsar2/core/models/book_model.dart';
 import 'package:ebsar2/core/models/category_model.dart';
+import 'package:ebsar2/features/search/cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,8 @@ class CategoryCubit extends Cubit<CategoryState> {
   CategoryCubit() : super(CategoryInitial());
 
   static CategoryCubit get(context) => BlocProvider.of(context);
+
+
 
   Future<List<CategoryModel>> getCategories() async {
     categories = [];
