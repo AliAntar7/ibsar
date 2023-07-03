@@ -48,7 +48,7 @@ class FavoritesScreen extends StatelessWidget {
                 centerTitle: true,
                 automaticallyImplyLeading: false,
                 elevation: 1,
-                backgroundColor: Color(0xFFFADC52),
+                backgroundColor: const Color(0xFFFADC52),
                 title: const Text(
                   'قائمة المفضلة لديك',
                   style: TextStyle(
@@ -58,68 +58,66 @@ class FavoritesScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              body: Container(
-                color: Colors.white,
-                child: GridView.count(
-                  crossAxisCount: 1,
-                  mainAxisSpacing: 13.0,
-                  padding: const EdgeInsets.all(13.0),
-                  crossAxisSpacing: 13.0,
-                  childAspectRatio: 1 / 0.4,
-                  children: List.generate(
-                    cubit.books.length,
-                        (index) => Container(
-                          width: double.infinity,
-                          //height: 40,
-                          decoration: ShapeDecoration(
-                            color: Color(0x66BFD0D1),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+              body: ListView.builder(
+                itemCount: cubit.books.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                      height: MediaQuery.of(context).size.height * 0.20,
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                      margin: const EdgeInsets.all(10),
+                      decoration: ShapeDecoration(
+                        color: const Color(0xfff6eded),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              decoration: ShapeDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(cubit.books[index].image.bookImage),
+                                  fit: BoxFit.fill,
+                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                              ),
+                            ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              textBaseline: TextBaseline.alphabetic,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
-                                  width: 120,
-                                  //height: 80,
-                                  decoration: ShapeDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage("${cubit.books[index].image.bookImage}"),
-                                      fit: BoxFit.fill,
+                                Expanded(
+                                  child: Text(cubit.books[index].name ,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontFamily: 'Changa_SemiBold',
                                     ),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                                   ),
                                 ),
-                                const SizedBox(width: 10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('${cubit.books[index].name}' ,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontFamily: 'Changa_SemiBold',
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    const Text('الكاتب تشارلز دويج' ,
-                                      style: TextStyle(
-                                        color: Colors.black38,
-                                        fontSize: 10,
-                                        fontFamily: 'Changa_SemiBold',
-                                      ),
-                                    ),
-                                  ],
+                                const SizedBox(height: 10),
+                                const Text('الكاتب تشارلز دويج' ,
+                                  style: TextStyle(
+                                    color: Colors.black38,
+                                    fontSize: 10,
+                                    fontFamily: 'Changa_SemiBold',
+                                  ),
                                 ),
                               ],
                             ),
-                          )
-                        ),
-                  ),
-                ),
+                          ),
+                        ],
+                      )
+                  );
+                },
               ),
             ),
           ),
