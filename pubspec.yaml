@@ -25,6 +25,8 @@ dependencies:
   http: ^0.13.5
   flutter_tts: ^3.7.0
   permission_handler: ^10.3.0
+  shared_preferences: ^2.2.0
+  get_it: ^7.6.0
 
 dev_dependencies:
   flutter_test:
@@ -39,4 +41,17 @@ flutter:
   assets:
     - assets/voices/
     - assets/lotties/
+
+  fonts:
+    - family: changa_regular
+      fonts:
+        - asset: assets/fonts/changa_regular.ttf
+
+    - family: Changa_SemiBold
+      fonts:
+        - asset: assets/fonts/Changa_SemiBold.ttf
+
+    - family: Changa_Bold
+      fonts:
+        - asset: assets/fonts/Changa_Bold.ttf
 

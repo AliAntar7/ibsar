@@ -3,8 +3,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:ebsar2/core/constants/app_string.dart';
 import 'package:ebsar2/core/models/book_model.dart';
 import 'package:ebsar2/core/models/category_model.dart';
-import 'package:ebsar2/features/search/cubit/search_cubit.dart';
-import 'package:flutter/material.dart';
+import 'package:ebsar2/main.dart';
+import 'package:equatable/equatable.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -17,7 +17,6 @@ class CategoryCubit extends Cubit<CategoryState> {
   static CategoryCubit get(context) => BlocProvider.of(context);
 
 
-
   Future<List<CategoryModel>> getCategories() async {
     categories = [];
     try {
@@ -27,28 +26,28 @@ class CategoryCubit extends Cubit<CategoryState> {
       data['data'].forEach((element) {
         categories.add(CategoryModel.fromJson(element));
       });
+      print(
+          '---------------------- The data of Categories is found successfully ----------------------');
     } catch (error) {
-      print('the $error');
+      print('The data of Categories is not found ----- the error ---> $error');
     }
     return categories;
   }
 
-  String categoryText = '';
-  List<String> bookNames = [];
-  List<String> bookImages = [];
 
   AudioPlayer audioPlayer = AudioPlayer();
   bool isListening = false;
   SpeechToText speechToText = SpeechToText();
   String text = AppString.listen;
-  BookModel? book;
   FlutterTts tts = FlutterTts();
   List<CategoryModel> categories = [];
   List<String> categoriesNames = [];
 
-  void readCategoriesName () async {
+  void readCategoriesName() async {
+    isListening = false;
     print('the length of categories is ${categories.length}');
     emit(StartReadCategoriesName());
+    categoriesNames = [];
     for (int i = 0; i < categories.length; i++) {
       categoriesNames.add(categories[i].name);
     }
@@ -57,7 +56,8 @@ class CategoryCubit extends Cubit<CategoryState> {
     print(categoriesNamesString);
     await tts.awaitSpeakCompletion(true);
     await tts.speak(
-        'قائمة التصنيفات لدينا هي $categoriesNamesString, لإختيار تصنيف اضغط ضغطتان على الشاشة , و اذكر اسم التصنيف ').whenComplete(() {
+        'قائمة التصنيفات لدينا هي $categoriesNamesString, لإختيار تصنيف اضغط ضغطتان على الشاشة , و اذكر اسم التصنيف ')
+        .whenComplete(() {
 
     });
     await tts.awaitSpeakCompletion(true);
@@ -66,6 +66,7 @@ class CategoryCubit extends Cubit<CategoryState> {
   }
 
   List<String> categoriesImages = [];
+
   void getImageForCategories() async {
     categoriesImages = [];
     for (int i = 0; i < categoriesNames.length; i++) {
@@ -76,5 +77,95 @@ class CategoryCubit extends Cubit<CategoryState> {
       }
     }
   }
+
+
+  String categoryText = '';
+
+  void listenToCategoryName() async {
+    emit(StartListenToCategoryName());
+    audioPlayer.stop();
+    var available = await speechToText.initialize();
+    if (available) {
+      speechToText.listen(
+        onResult: (result) {
+          categoryText = result.confidence > 0.5 ? result.recognizedWords : ' ... جاري الاستماع ';
+          print(categoryText);
+          if(categoryText == 'تصنيف') {
+            emit(const SearchingError(
+              message: 'كلمة تصنيف لا تكفي',
+            ));
+          }else{
+            if (result.finalResult) {
+              print(categoryText);
+              emit(EndListenToCategoryName());
+              searchForBooksByCategoryName(categoryText);
+            }
+          }
+        },
+        listenMode: ListenMode.search,
+        localeId: 'ar_EG',
+      );
+    }
+  }
+
+  List<String> bookNames = [];
+  List<BookModel> books = GetBooks.books;
+
+  void searchForBooksByCategoryName(String categoryText) async {
+    try {
+      emit(SearchingForBooksByCategoryNameLoading());
+      bookNames = [];
+      for (int i = 0; i < books.length; i++) {
+        if (books[i].category.name.contains(categoryText)) {
+          bookNames.add(books[i].name);
+        }
+      }
+      if (bookNames.isEmpty) {
+        emit(SearchingForBooksByCategoryNameError(
+            message: 'لا يوجد تصنيف بهذا الاسم . ${categoryText}'));
+      } else {
+        emit(SearchingForBooksByCategoryNameDone(
+            message: bookNames.join(' , ')));
+      }
+      getImageForBooks();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  List<String> bookImages = [];
+  void getImageForBooks() async {
+    bookImages = [];
+    for (int i = 0; i < bookNames.length; i++) {
+      for (int j = 0; j < books.length; j++) {
+        if (bookNames[i] == books[j].name) {
+          bookImages.add(books[j].image.bookImage);
+        }
+      }
+    }
+    print(bookImages);
+  }
+
+
+  void readBookName() async {
+    emit(StartReadBooksNames());
+    String bookNamesString = bookNames.join(' , ');
+    print('the book names is $bookNamesString');
+    await tts.awaitSpeakCompletion(true);
+    await tts.speak(
+        ' قائمة الكتب المتاحه بتصنيف ${categoryText}, هي , $bookNamesString , لإختيار كتاب اضغط ضغطتان على الشاشة , و اذكر اسم الكتاب , ');
+    await tts.awaitSpeakCompletion(true);
+    isListening = true;
+    emit(EndReadBooksNames());
+
+  }
+
+  void speechError({required String error}) async {
+    await tts.speak(error);
+    await tts.awaitSpeakCompletion(true);
+  }
+
+  BookModel? book;
+
 
 }

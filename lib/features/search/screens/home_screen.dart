@@ -22,16 +22,28 @@ class HomeScreen extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const FirstScreen(),
+                    builder: (context) => const FirstScreen(
+                      isComeAgain: true,
+                    ),
                   ),
                       (route) => false);
               cubit.text = ' ابحث عن كتاب اخر';
               cubit.searchingIcon = false;
-              cubit.playWelcomeBackAudio();
             } : null,
             onDoubleTap: cubit.isListening ? (){
               cubit.playAudio();
             } : null,
+            onVerticalDragStart: cubit.isListening
+                ? (DragStartDetails details) {
+              print('vertical drag start----------');
+            }
+                : null,
+            onVerticalDragEnd: cubit.isListening
+                ? (DragEndDetails details) {
+              print('vertical drag end-----------------');
+              cubit.makeItFavorite();
+            }
+                : null,
             child: Scaffold(
               body: Container(
                 height: MediaQuery.of(context).size.height,

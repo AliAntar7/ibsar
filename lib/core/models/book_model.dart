@@ -4,6 +4,7 @@ class BookModel extends Equatable {
   int id;
   String name;
   Category category;
+  Author author;
   Image image;
   File file;
   Voice voice;
@@ -12,6 +13,7 @@ class BookModel extends Equatable {
     required this.id,
     required this.name,
     required this.category,
+    required this.author,
     required this.image,
     required this.file,
     required this.voice,
@@ -21,6 +23,7 @@ class BookModel extends Equatable {
     id: json["id"],
     name: json["name"],
     category: Category.fromJson(json["category"]),
+    author: Author.fromJson(json["auther"]),
     image: Image.fromJson(json["Image"]),
     file: File.fromJson(json["File"]),
     voice: Voice.fromJson(json["Voice"]),
@@ -32,12 +35,33 @@ class BookModel extends Equatable {
     id,
     name,
     category,
+    author,
     image,
     file,
     voice,
   ];
 
 
+}
+
+
+class Author extends Equatable {
+  String name;
+
+  Author({
+    required this.name,
+  });
+
+  factory Author.fromJson(Map<String, dynamic> json) =>
+      Author(
+        name: json["name"],
+      );
+
+  @override
+
+  List<Object?> get props => [
+    name,
+  ];
 }
 
 class Category extends Equatable {
