@@ -1,4 +1,3 @@
-import 'package:ebsar2/core/constants/app_string.dart';
 import 'package:ebsar2/features/category/cubit/category_cubit.dart';
 import 'package:ebsar2/features/search/cubit/search_cubit.dart';
 import 'package:ebsar2/features/search/screens/home_screen.dart';
@@ -47,52 +46,97 @@ class BooksScreen extends StatelessWidget {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
+              backgroundColor: const Color(0xFFFDEEA9),
               appBar: AppBar(
                 centerTitle: true,
                 automaticallyImplyLeading: false,
                 elevation: 1,
+                backgroundColor: const Color(0xFFFADC52),
                 title: Text(
                   'كتب تصنيف ${cubit.categoryText}',
-                ),
-              ),
-              body: Container(
-                color: Colors.grey[300],
-                child: GridView.count(
-                  //shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5.0,
-                  padding: const EdgeInsets.all(5.0),
-                  crossAxisSpacing: 5.0,
-                  childAspectRatio: 1 / 1.30,
-                  children: List.generate(
-                    cubit.bookNames.length,
-                        (index) => Container(
-                          color: Colors.white,
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Image.network(
-                                  cubit.bookImages[index],
-                                  //fit: BoxFit.cover,
-                                  width: 150,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(1.0),
-                                child: Text(
-                                  cubit.bookNames[index],
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontFamily: 'Changa_SemiBold',
                   ),
                 ),
+              ),
+              body: ListView.separated(
+                padding: const EdgeInsets.all(15),
+                itemCount: cubit.bookNames.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                      height: MediaQuery.of(context).size.height * 0.20,
+                      padding: const EdgeInsets.all(10),
+                      decoration: ShapeDecoration(
+                        color: Colors.white70,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              decoration: ShapeDecoration(
+                                color: Colors.grey[600],
+                                shadows: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                                image: DecorationImage(
+                                  image: NetworkImage(cubit.bookImages[index]),
+                                  fit: BoxFit.fill,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 100,
+                                  child: Text(
+                                    cubit.bookNames[index],
+                                    maxLines: 2,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      fontFamily: 'Changa_SemiBold',
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 1,
+                                  color: Colors.black12,
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  cubit.bookPublisher[index],
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 10,
+                                    fontFamily: 'Changa_SemiBold',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ));
+                },
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 15),
               ),
             ),
           ),

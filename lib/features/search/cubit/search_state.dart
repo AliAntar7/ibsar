@@ -21,9 +21,10 @@ class SearchingDone1 extends SearchState {}
 class StopListening extends SearchState {}
 class AudioPaused extends SearchState {}
 class AudioResumed extends SearchState {}
-class AudioStopped extends SearchState {}
 class AudioPlaying extends SearchState {}
 class AudioPlayed extends SearchState {}
+class AudioStopped extends SearchState {}
+class PlayPositionUserStopped extends SearchState {}
 class RemoveFromFavorite extends SearchState {}
 class AddingToFavorites extends SearchState {}
 class AddedToFavorites extends SearchState {}
@@ -39,3 +40,5 @@ class SearchingError1 extends SearchState {
   final String message;
   const SearchingError1({required this.message});
 }
+
+

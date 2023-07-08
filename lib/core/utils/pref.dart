@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-enum MySharedKeys { userName, userID, favourites}
+enum MySharedKeys { userName, userID, favourites , token }
 class MySharedPref {
   late SharedPreferences _preferences;
 

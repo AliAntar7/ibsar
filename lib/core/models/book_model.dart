@@ -4,29 +4,29 @@ class BookModel extends Equatable {
   int id;
   String name;
   Category category;
-  Author author;
+  SearchOfWords searchOfWords;
+  Publisher publisher;
   Image image;
   File file;
-  Voice voice;
 
   BookModel({
     required this.id,
     required this.name,
     required this.category,
-    required this.author,
+    required this.searchOfWords,
     required this.image,
     required this.file,
-    required this.voice,
+    required this.publisher,
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) => BookModel(
     id: json["id"],
     name: json["name"],
     category: Category.fromJson(json["category"]),
-    author: Author.fromJson(json["auther"]),
+    searchOfWords: SearchOfWords.fromJson(json["search_words"]),
+    publisher: Publisher.fromJson(json["publisher"]),
     image: Image.fromJson(json["Image"]),
     file: File.fromJson(json["File"]),
-    voice: Voice.fromJson(json["Voice"]),
   );
 
 
@@ -35,25 +35,42 @@ class BookModel extends Equatable {
     id,
     name,
     category,
-    author,
+    searchOfWords,
     image,
     file,
-    voice,
+    publisher,
   ];
 
 
 }
 
-
-class Author extends Equatable {
+class Publisher extends Equatable {
   String name;
 
-  Author({
+  Publisher({
     required this.name,
   });
 
-  factory Author.fromJson(Map<String, dynamic> json) =>
-      Author(
+  factory Publisher.fromJson(Map<String, dynamic> json) =>
+      Publisher(
+        name: json["name"],
+      );
+
+  @override
+  List<Object?> get props => [
+    name,
+  ];
+}
+
+class SearchOfWords extends Equatable {
+  String name;
+
+  SearchOfWords({
+    required this.name,
+  });
+
+  factory SearchOfWords.fromJson(Map<String, dynamic> json) =>
+      SearchOfWords(
         name: json["name"],
       );
 
@@ -67,20 +84,17 @@ class Author extends Equatable {
 class Category extends Equatable {
   int id;
   String name;
-  String categoryVoice;
   String categoryImage;
 
   Category({
     required this.id,
     required this.name,
-    required this.categoryVoice,
     required this.categoryImage,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
     id: json["id"],
     name: json["name"],
-    categoryVoice: json["category_voice"],
     categoryImage: json["category_image"],
   );
 
@@ -90,7 +104,6 @@ class Category extends Equatable {
   List<Object?> get props => [
     id,
     name,
-    categoryVoice,
   ];
 }
 
@@ -133,23 +146,3 @@ class File extends Equatable {
 
 }
 
-class Voice extends Equatable {
-  String? bookVoice;
-
-  Voice({
-    required this.bookVoice,
-  });
-
-  factory Voice.fromJson(Map<String, dynamic> json) => Voice(
-    bookVoice: json["book_voice"],
-  );
-
-
-  @override
-
-
-  List<Object?> get props => [
-    bookVoice,
-  ];
-
-}

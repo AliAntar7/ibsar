@@ -45,48 +45,51 @@ class CategoriesScreen extends StatelessWidget {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
+              backgroundColor: const Color(0xFFFDEEA9),
               appBar: AppBar(
-                centerTitle: true,
                 automaticallyImplyLeading: false,
                 elevation: 1,
+                backgroundColor: const Color(0xFFFADC52),
                 title: const Text(
-                  AppString.categories,
+                  'قائمة التصنيــفات ...',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontFamily: 'Changa_SemiBold',
+                  ),
                 ),
               ),
-              body: Container(
-                color: Colors.grey[300],
-                child: GridView.count(
-                  //shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5.0,
-                  padding: const EdgeInsets.all(5.0),
-                  crossAxisSpacing: 5.0,
-                  childAspectRatio: 1 / 1.30,
-                  children: List.generate(
-                    cubit.categoriesNames.length,
-                        (index) => Container(
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Image.network(
-                              cubit.categoriesImages[index],
-                              //fit: BoxFit.cover,
-                              width: 150,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(
-                              cubit.categoriesNames[index],
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
+              body: GridView.count(
+                //shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                mainAxisSpacing: 10.0,
+                padding: const EdgeInsets.all(10.0),
+                crossAxisSpacing: 10.0,
+                childAspectRatio: 1 / 1,
+                children: List.generate(
+                  cubit.categoriesNames.length,
+                  (index) => Container(
+                    height: MediaQuery.of(context).size.height * 0.20,
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
+                    decoration: ShapeDecoration(
+                      color: Colors.white70,
+                      shadows: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 8,
+                          offset: const Offset(5, 7),
+                        ),
+                      ],
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)),
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          cubit.categoriesImages[index],
+                        ),
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),

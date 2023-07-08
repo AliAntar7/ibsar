@@ -1,6 +1,8 @@
 import 'dart:math';
-
 import 'package:audioplayers/audioplayers.dart';
+import 'package:dio/dio.dart';
+import 'package:ebsar2/core/di/di.dart';
+import 'package:ebsar2/core/utils/pref.dart';
 import 'package:ebsar2/features/search/cubit/search_cubit.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -16,29 +18,94 @@ class LoginCubit extends Cubit<LoginState> {
   static LoginCubit get(context) => BlocProvider.of(context);
 
   AudioPlayer loginAudioPlayer = AudioPlayer();
-  AudioPlayer audioPlayer = AudioPlayer();
+  bool clickIcon = false;
   bool allowClick = false;
 
   void audioLogin() async {
     emit(StartPlayLoginAudio());
-    await loginAudioPlayer.play(AssetSource('voices/login1.mp3'));
+    await loginAudioPlayer.play(AssetSource('voices/login2.mp3'));
     loginAudioPlayer.onPlayerComplete.listen((event) {
-      audioPlayer.play(AssetSource('voices/sound1.mp3'));
       allowClick = true;
       emit(EndPlayLoginAudio());
-    });
-    audioPlayer.onPlayerComplete.listen((event) {
-      listenToUser();
     });
   }
 
   SpeechToText speechToText = SpeechToText();
 
   String text = '';
-  int userId = 579;
+  int? userId ;
   SearchCubit searchCubit = SearchCubit();
 
+// register with api https://ebsar.website/api/register?users_id=757&user_name=solex
+
+  Future<void> register() async {
+    emit(RegisterLoading());
+    print(userName);
+    print(userId.toString());
+    var response = await Dio().post(
+        'https://ebsar.website/api/register?users_id=$userId&user_name=$userName');
+    print(response.data);
+    print(response.statusCode);
+    print(response.statusMessage);
+    if (response.statusCode == 200) {
+      sl<MySharedPref>().putString(
+          key: MySharedKeys.token, value: response.data['data']['token']);
+      getUserData(
+        userId: userId.toString(),
+      );
+      successRegister();
+    } else {
+      emit(RegisterError(message: response.data['message']));
+    }
+  }
+
+  // login with api https://ebsar.website/api/login?users_id=757
+
+  Future<void> login(String id) async {
+    emit(LoginLoading());
+    var response =
+        await Dio().post('https://ebsar.website/api/login?users_id=$id');
+    if (response.statusCode == 200) {
+      sl<MySharedPref>().putString(
+          key: MySharedKeys.token, value: response.data['data']['token']);
+      getUserData(
+        userId: id,
+      );
+      emit(LoginSuccessfully());
+    } else {
+      emit(LoginError(message: response.data['message']));
+    }
+  }
+
+  // get method to get user data with api https://ebsar.website/api/user/757
+
+  Future<void> getUserData(
+      {required String userId}
+      ) async {
+    var response = await Dio().get('https://ebsar.website/api/user/$userId',
+      options: Options(
+        headers: {
+          //Authorization
+          'Authorization':
+              'Bearer ${sl<MySharedPref>().getString(key: MySharedKeys.token)}'
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      print('user name is ${response.data}');
+      sl<MySharedPref>().putString(
+          key: MySharedKeys.userName,
+          value: response.data['data']['user_name'].toString());
+      sl<MySharedPref>().putString(
+          key: MySharedKeys.userID, value: response.data['data']['users_id'].toString());
+    } else {
+      emit(LoginError(message: response.data['message']));
+    }
+  }
+
   void listenToUser() async {
+    emit(StartListening());
+    clickIcon = true;
     var available = await speechToText.initialize();
     if (available) {
       speechToText.listen(
@@ -49,11 +116,9 @@ class LoginCubit extends Cubit<LoginState> {
           text = text.replaceAll(' ', '');
           print(text);
           if (result.finalResult == true) {
-            if (text != userId.toString()) {
-              emit(SayingErrorID(message: 'الرقم الذي قلته غير صحيح $text'));
-            }else {
-              emit(LoginSuccessfully());
-            }
+            login(
+              text,
+            );
           }
         },
         listenMode: ListenMode.search,
@@ -68,24 +133,28 @@ class LoginCubit extends Cubit<LoginState> {
     //await tts.awaitSpeakCompletion(true);
   }
 
-  int id = 0;
   AudioPlayer createAccountAudio = AudioPlayer();
+  AudioPlayer createAccountAudio0 = AudioPlayer();
   FlutterTts tts = FlutterTts();
+
   void createAccount() async {
     emit(StartCreateAccount());
     Random random = Random();
-    id = random.nextInt(1000);
-    await tts.speak('لإنشاء حساب جديد , اذكر اسمكْ فقط بعد سماع الصفارة ');
-    await tts.awaitSpeakCompletion(true);
-    await createAccountAudio.play(AssetSource('voices/sound1.mp3'));
+    // RANDOM 3 NUMBERS FROM 100 TO 999
+    userId = random.nextInt(800) + 100;
+    await createAccountAudio.play(AssetSource('voices/register.mp3'));
     createAccountAudio.onPlayerComplete.listen((event) async {
+      await createAccountAudio0.play(AssetSource('voices/sound1.mp3'));
+    });
+    createAccountAudio0.onPlayerComplete.listen((event) async {
       listenToUserName();
     });
   }
 
-  FlutterTts ttsSayUserID = FlutterTts();
   String userName = '';
+
   void listenToUserName() async {
+    emit(StartListeningToUserName());
     var available = await speechToText.initialize();
     if (available) {
       speechToText.listen(
@@ -95,14 +164,8 @@ class LoginCubit extends Cubit<LoginState> {
               : ' ... جاري الاستماع ';
           print(userName);
           if (result.finalResult == true) {
-            tts.speak('تم إنشاء حساب بإسم $userName');
-            tts.awaitSpeakCompletion(true);
-            ttsSayUserID.speak('و رقم حسابك هو $id');
-            ttsSayUserID.awaitSpeakCompletion(true);
-            print(id);
-            print(userName);
-            emit(EndCreateAccount());
-            allowClick = true;
+            emit(EndListeningToUserName());
+            register();
           }
         },
         listenMode: ListenMode.search,
@@ -111,7 +174,27 @@ class LoginCubit extends Cubit<LoginState> {
       );
     }
   }
+
+  void stopListening() {
+    speechToText.stop();
+    emit(StopListening());
+  }
+
+  void stopTTS() async {
+    await tts.stop();
+  }
+
+  FlutterTts ttsSayUserID = FlutterTts();
+  FlutterTts ttsSayUseName = FlutterTts();
+
+  void successRegister() async {
+    await ttsSayUseName.speak('تم إنشاء حساب بإسم $userName');
+    await ttsSayUseName.awaitSpeakCompletion(true);
+    await ttsSayUserID.speak('و رقم حسابك هو $userId');
+    await ttsSayUserID.awaitSpeakCompletion(true);
+    print(userId);
+    print(userName);
+    emit(EndCreateAccount());
+    allowClick = true;
+  }
 }
-
-
-

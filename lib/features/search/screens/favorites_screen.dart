@@ -1,3 +1,4 @@
+import 'package:ebsar2/features/category/cubit/category_cubit.dart';
 import 'package:ebsar2/features/search/cubit/search_cubit.dart';
 import 'package:ebsar2/features/search/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var cubit = SearchCubit.get(context);
+    var categoryCubit = CategoryCubit.get(context);
     return BlocConsumer<SearchCubit, SearchState>(
       listener: (context, state) {
         if (state is SearchingDone1) {
@@ -36,10 +38,10 @@ class FavoritesScreen extends StatelessWidget {
         return GestureDetector(
           onDoubleTap: cubit.isListening
               ? () {
-            print('double tap');
-            cubit.listen();
-            cubit.stopTTS();
-          }
+                  print('double tap');
+                  cubit.listen();
+                  cubit.stopTTS();
+                }
               : null,
           child: Directionality(
             textDirection: TextDirection.rtl,
@@ -50,63 +52,83 @@ class FavoritesScreen extends StatelessWidget {
                 elevation: 1,
                 backgroundColor: const Color(0xFFFADC52),
                 title: const Text(
-                  'قائمة المفضلة لديك',
+                  'قائمة المفضلة لـ علي عنتر علي  ...',
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 20,
+                    fontSize: 18,
                     fontFamily: 'Changa_SemiBold',
                   ),
                 ),
               ),
-              body: ListView.builder(
-                itemCount: cubit.books.length,
+              body: ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(15),
+                itemCount: cubit.myFavoriteBooks.length,
                 itemBuilder: (context, index) {
                   return Container(
                       height: MediaQuery.of(context).size.height * 0.20,
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       decoration: ShapeDecoration(
-                        color: const Color(0xfff6eded),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                        color: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        textBaseline: TextBaseline.alphabetic,
                         children: [
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: Container(
                               decoration: ShapeDecoration(
+                                color: Colors.grey[600],
+                                shadows: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
                                 image: DecorationImage(
-                                  image: NetworkImage(cubit.books[index].image.bookImage),
+                                  image: NetworkImage(
+                                    'https://ebsar.website/public/uploads/books_images/3bkryt_mohmd.png',
+                                  ),
                                   fit: BoxFit.fill,
                                 ),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)),
                               ),
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            flex: 4,
+                            flex: 2,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
+                              //mainAxisSize: MainAxisSize.min,
                               children: [
-                                Expanded(
-                                  child: Text(cubit.books[index].name ,
+                                SizedBox(
+                                  height: 100,
+                                  child: Text(
+                                    // categoryCubit.bookNames[index],
+                                    'كتاب عبقرية محمد',
                                     maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       color: Colors.black,
-                                      fontSize: 18,
+                                      fontSize: 15,
                                       fontFamily: 'Changa_SemiBold',
                                     ),
                                   ),
                                 ),
+                                Container(
+                                  height: 1,
+                                  color: Colors.black12,
+                                ),
                                 const SizedBox(height: 10),
-                                const Text('الكاتب تشارلز دويج' ,
+                                const Text(
+                                  'الكاتب عباس محمود العقاد',
                                   style: TextStyle(
-                                    color: Colors.black38,
+                                    color: Colors.black54,
                                     fontSize: 10,
                                     fontFamily: 'Changa_SemiBold',
                                   ),
@@ -115,9 +137,10 @@ class FavoritesScreen extends StatelessWidget {
                             ),
                           ),
                         ],
-                      )
-                  );
+                      ));
                 },
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 15),
               ),
             ),
           ),

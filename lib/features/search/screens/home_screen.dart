@@ -4,6 +4,7 @@ import 'package:ebsar2/features/search/cubit/search_cubit.dart';
 import 'package:ebsar2/features/search/screens/first_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -45,6 +46,19 @@ class HomeScreen extends StatelessWidget {
             }
                 : null,
             child: Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                elevation: 0,
+                backgroundColor: const Color(0xFFFADC52),
+                title: Text(
+                  'أنت الآن تستمع إلى ${cubit.book!.name} ...',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontFamily: 'Changa_SemiBold',
+                  ),
+                ),
+              ),
               body: Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
@@ -128,6 +142,7 @@ class HomeScreen extends StatelessWidget {
                               fontSize: 30,
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
+                              fontFamily: 'Changa_SemiBold',
                             ),
                           ),
                           const SizedBox(
@@ -150,8 +165,84 @@ class HomeScreen extends StatelessWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Text('لإيقاف الكتاب اضغط على الشاشة مرتين'),
-                                  Text('للعودة للقائمة الرئيسية اضغط على الشاشة مرة واحدة'),
+                                  Row(
+                                    //crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Lottie.asset(
+                                        'assets/lotties/attention.json',
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.fill,
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      const Expanded(
+                                        child: Text(
+                                          'لإيقاف الكتاب أو تشغيله اضغط مرتين على الشاشة',
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12,
+                                            fontFamily: 'Changa_SemiBold',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    //crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Lottie.asset(
+                                        'assets/lotties/attention.json',
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.fill,
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      const Expanded(
+                                        child: Text(
+                                          'للعودة لصفحة الرئيسية اضغط ضغطة واحدة على الشاشة',
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12,
+                                            fontFamily: 'Changa_SemiBold',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    //crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Lottie.asset(
+                                        'assets/lotties/attention.json',
+                                        height: 50,
+                                        width: 50,
+                                        fit: BoxFit.fill,
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      const Expanded(
+                                        child: Text(
+                                          'لإضافة الكتاب إلى المفضلة اسحب الشاشة للأعلى ',
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12,
+                                            fontFamily: 'Changa_SemiBold',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),

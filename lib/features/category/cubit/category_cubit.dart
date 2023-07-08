@@ -9,13 +9,13 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
 part 'category_state.dart';
 
 class CategoryCubit extends Cubit<CategoryState> {
   CategoryCubit() : super(CategoryInitial());
 
   static CategoryCubit get(context) => BlocProvider.of(context);
-
 
   Future<List<CategoryModel>> getCategories() async {
     categories = [];
@@ -26,6 +26,7 @@ class CategoryCubit extends Cubit<CategoryState> {
       data['data'].forEach((element) {
         categories.add(CategoryModel.fromJson(element));
       });
+
       print(
           '---------------------- The data of Categories is found successfully ----------------------');
     } catch (error) {
@@ -33,7 +34,6 @@ class CategoryCubit extends Cubit<CategoryState> {
     }
     return categories;
   }
-
 
   AudioPlayer audioPlayer = AudioPlayer();
   bool isListening = false;
@@ -55,11 +55,10 @@ class CategoryCubit extends Cubit<CategoryState> {
     String categoriesNamesString = categoriesNames.join(' , ');
     print(categoriesNamesString);
     await tts.awaitSpeakCompletion(true);
-    await tts.speak(
-        'قائمة التصنيفات لدينا هي $categoriesNamesString, لإختيار تصنيف اضغط ضغطتان على الشاشة , و اذكر اسم التصنيف ')
-        .whenComplete(() {
-
-    });
+    await tts
+        .speak(
+            'قائمة التصنيفات لدينا هي $categoriesNamesString, لإختيار تصنيف اضغط ضغطتان على الشاشة , و اذكر اسم التصنيف ')
+        .whenComplete(() {});
     await tts.awaitSpeakCompletion(true);
     isListening = true;
     emit(EndReadCategoriesName());
@@ -78,7 +77,6 @@ class CategoryCubit extends Cubit<CategoryState> {
     }
   }
 
-
   String categoryText = '';
 
   void listenToCategoryName() async {
@@ -88,13 +86,15 @@ class CategoryCubit extends Cubit<CategoryState> {
     if (available) {
       speechToText.listen(
         onResult: (result) {
-          categoryText = result.confidence > 0.5 ? result.recognizedWords : ' ... جاري الاستماع ';
+          categoryText = result.confidence > 0.5
+              ? result.recognizedWords
+              : ' ... جاري الاستماع ';
           print(categoryText);
-          if(categoryText == 'تصنيف') {
+          if (categoryText == 'تصنيف') {
             emit(const SearchingError(
               message: 'كلمة تصنيف لا تكفي',
             ));
-          }else{
+          } else {
             if (result.finalResult) {
               print(categoryText);
               emit(EndListenToCategoryName());
@@ -128,12 +128,14 @@ class CategoryCubit extends Cubit<CategoryState> {
             message: bookNames.join(' , ')));
       }
       getImageForBooks();
+      getPublisherName();
     } catch (e) {
       print(e);
     }
   }
 
   List<String> bookImages = [];
+
   void getImageForBooks() async {
     bookImages = [];
     for (int i = 0; i < bookNames.length; i++) {
@@ -146,6 +148,19 @@ class CategoryCubit extends Cubit<CategoryState> {
     print(bookImages);
   }
 
+  List<String> bookPublisher = [];
+
+  void getPublisherName() async {
+    bookPublisher = [];
+    for (int i = 0; i < bookNames.length; i++) {
+      for (int j = 0; j < books.length; j++) {
+        if (bookNames[i] == books[j].name) {
+          bookPublisher.add(books[j].publisher.name);
+        }
+      }
+    }
+    print(bookPublisher);
+  }
 
   void readBookName() async {
     emit(StartReadBooksNames());
@@ -157,7 +172,6 @@ class CategoryCubit extends Cubit<CategoryState> {
     await tts.awaitSpeakCompletion(true);
     isListening = true;
     emit(EndReadBooksNames());
-
   }
 
   void speechError({required String error}) async {
@@ -166,6 +180,4 @@ class CategoryCubit extends Cubit<CategoryState> {
   }
 
   BookModel? book;
-
-
 }

@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:ebsar2/features/category/cubit/category_cubit.dart';
 import 'package:ebsar2/features/category/screens/categories_screen.dart';
 import 'package:ebsar2/features/search/cubit/search_cubit.dart';
@@ -68,8 +67,8 @@ class _FirstScreenState extends State<FirstScreen> {
                   print('long press cancel');
                   context.read<SearchCubit>().stopListening();
                   context.read<SearchCubit>().searchingIcon = false;
-                  print(context.read<SearchCubit>().userId);
-                  print(context.read<SearchCubit>().userName);
+                  // print(context.read<SearchCubit>().userId);
+                  // print(context.read<SearchCubit>().userName);
                   print(context.read<SearchCubit>().myFavoriteBooks);
                   context.read<SearchCubit>().text = 'قول اسم كتاب';
                 }
@@ -132,30 +131,124 @@ class _FirstScreenState extends State<FirstScreen> {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
-              body: Center(
+              backgroundColor: const Color(0xFFFDEEA9),
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                elevation: 1,
+                backgroundColor: const Color(0xFFFADC52),
+                title: const Text(
+                  'الصفحة الرئيسية ...',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontFamily: 'Changa_SemiBold',
+                  ),
+                ),
+              ),
+              body: Container(
+                margin: const EdgeInsets.all(10),
+                width: double.infinity,
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text(
-                        context.read<SearchCubit>().text,
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontSize: 40,
+                    Row(
+                      //crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Lottie.asset(
+                          'assets/lotties/attention.json',
+                          height: 50,
+                          width: 50,
+                          fit: BoxFit.fill,
                         ),
-                      ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Expanded(
+                          child: Text(
+                            'للبحث عن كتاب اضغط ضغطة مطولة على الشاشة و اذكر اسم الكتاب',
+                            maxLines: 2,
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 12,
+                              fontFamily: 'Changa_SemiBold',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      //crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Lottie.asset(
+                          'assets/lotties/attention.json',
+                          height: 50,
+                          width: 50,
+                          fit: BoxFit.fill,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Expanded(
+                          child: Text(
+                            'لسماع قائمة التصنيفات لدينا اضغط مرتين على الشاشة',
+                            maxLines: 2,
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 12,
+                              fontFamily: 'Changa_SemiBold',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      //crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Lottie.asset(
+                          'assets/lotties/attention.json',
+                          height: 50,
+                          width: 50,
+                          fit: BoxFit.fill,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Expanded(
+                          child: Text(
+                            'لسماع قائمة المفضلة لديك اسحب الشاشة للأعلى ',
+                            maxLines: 2,
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 12,
+                              fontFamily: 'Changa_SemiBold',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(
-                      height: 80,
+                      height: 170,
                     ),
-                    Lottie.asset(
-                      context.read<SearchCubit>().searchingIcon
-                          ? 'assets/lotties/searching1.json'
-                          : 'assets/lotties/command.json',
-                      height: 200,
-                      width: 200,
+                    Container(
+                      child: context.read<SearchCubit>().searchingIcon ? Lottie.asset(
+                        'assets/lotties/searching3.json',
+                        height: 280,
+                        width: 280,
+                        fit: BoxFit.fill,
+                      ) : Lottie.asset(
+                        'assets/lotties/click_here.json',
+                        height: 280,
+                        width: 280,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ],
                 ),
