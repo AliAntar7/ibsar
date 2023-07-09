@@ -1,3 +1,5 @@
+import 'package:ebsar2/core/di/di.dart';
+import 'package:ebsar2/core/utils/pref.dart';
 import 'package:ebsar2/features/category/cubit/category_cubit.dart';
 import 'package:ebsar2/features/category/screens/categories_screen.dart';
 import 'package:ebsar2/features/search/cubit/search_cubit.dart';
@@ -61,91 +63,114 @@ class _FirstScreenState extends State<FirstScreen> {
         }
       },
       builder: (context, state) {
-        return GestureDetector(
-          onLongPressCancel: context.read<SearchCubit>().isListening
-              ? () {
-                  print('long press cancel');
-                  context.read<SearchCubit>().stopListening();
-                  context.read<SearchCubit>().searchingIcon = false;
-                  // print(context.read<SearchCubit>().userId);
-                  // print(context.read<SearchCubit>().userName);
-                  print(context.read<SearchCubit>().myFavoriteBooks);
-                  context.read<SearchCubit>().text = 'قول اسم كتاب';
-                }
-              : null,
-          onLongPressDown: context.read<SearchCubit>().isListening
-              ? (LongPressDownDetails details) {
-                  print('long press down');
-                  context.read<SearchCubit>().listen();
-                  /// TODO error come when this function called buz no tts play to stop it
-                  context.read<SearchCubit>().stopTTS();
-                }
-              : null,
-          onLongPressUp: context.read<SearchCubit>().isListening
-              ? () {
-                  print('long press up');
-                  context.read<SearchCubit>().stopListening();
-                  context.read<SearchCubit>().searchingIcon = false;
-                  context.read<SearchCubit>().text = 'قول اسم كتاب';
-                }
-              : null,
-          onTap: context.read<SearchCubit>().isListening
-              ? () {
-                  print('tap');
-                  context.read<SearchCubit>().stopAudio();
-                  context.read<SearchCubit>().searchingIcon = false;
-                  context.read<SearchCubit>().text = 'قول اسم كتاب';
-                }
-              : null,
-          onDoubleTap: context.read<SearchCubit>().isListening
-              ? () {
-                  print('double tapped');
-                  context.read<SearchCubit>().stopListening();
-                  context.read<SearchCubit>().speechToText.stop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CategoriesScreen(),
-                    ),
-                  );
-                  CategoryCubit.get(context).readCategoriesName();
-                }
-              : null,
-          onVerticalDragEnd: context.read<SearchCubit>().isListening
-              ? context.read<SearchCubit>().isFavoritesEmpty()
-                  ? (DragEndDetails details) {
-                      context.read<SearchCubit>().stopListening();
-                      print('no books in favorite');
-                      context.read<SearchCubit>().noBookFavorite();
-                      context.read<SearchCubit>().searchingIcon = false;
-                      context.read<SearchCubit>().text =
-                          'لا يوجد كتب مفضلة حتى الآن';
-                    }
-                  : (DragEndDetails details) {
-                      context.read<SearchCubit>().stopListening();
-                      print('yes there is books in favorite');
-                      context.read<SearchCubit>().searchingIcon = false;
-                      context.read<SearchCubit>().readTheFavorites();
-                    }
-              : null,
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
-              backgroundColor: const Color(0xFFFDEEA9),
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
-                elevation: 1,
-                backgroundColor: const Color(0xFFFADC52),
-                title: const Text(
-                  'الصفحة الرئيسية ...',
-                  style: TextStyle(
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFDEEA9),
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              elevation: 1,
+              backgroundColor: const Color(0xFFFADC52),
+              title:
+                  sl<MySharedPref>().getString(key: MySharedKeys.token) != ''
+                      ? Text(
+                          'مرحباً بك ...  ${sl<MySharedPref>().getString(key: MySharedKeys.userName)}',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: 'Changa_SemiBold',
+                          ),
+                        )
+                      : Text(
+                          'الصفحة الرئيسية ...',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: 'Changa_SemiBold',
+                          ),
+                        ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    sl<MySharedPref>().clearShared();
+                    print('SharedPref cleared');
+                  },
+                  icon: const Icon(
+                    Icons.logout,
                     color: Colors.black,
-                    fontSize: 18,
-                    fontFamily: 'Changa_SemiBold',
                   ),
                 ),
-              ),
-              body: Container(
+              ],
+            ),
+            body: GestureDetector(
+              onLongPressCancel: context.read<SearchCubit>().isListening
+                  ? () {
+                print('long press cancel');
+                context.read<SearchCubit>().stopListening();
+                context.read<SearchCubit>().searchingIcon = false;
+                // print(context.read<SearchCubit>().userId);
+                // print(context.read<SearchCubit>().userName);
+                print(context.read<SearchCubit>().myFavoriteBooks);
+                context.read<SearchCubit>().text = 'قول اسم كتاب';
+              }
+                  : null,
+              onLongPressDown: context.read<SearchCubit>().isListening
+                  ? (LongPressDownDetails details) {
+                print('long press down');
+                context.read<SearchCubit>().listen();
+
+                /// TODO error come when this function called buz no tts play to stop it
+                context.read<SearchCubit>().stopTTS();
+              }
+                  : null,
+              onLongPressUp: context.read<SearchCubit>().isListening
+                  ? () {
+                print('long press up');
+                context.read<SearchCubit>().stopListening();
+                context.read<SearchCubit>().searchingIcon = false;
+                context.read<SearchCubit>().text = 'قول اسم كتاب';
+              }
+                  : null,
+              onTap: context.read<SearchCubit>().isListening
+                  ? () {
+                print('tap');
+                context.read<SearchCubit>().stopAudio();
+                context.read<SearchCubit>().searchingIcon = false;
+                context.read<SearchCubit>().text = 'قول اسم كتاب';
+              }
+                  : null,
+              onDoubleTap: context.read<SearchCubit>().isListening
+                  ? () {
+                print('double tapped');
+                context.read<SearchCubit>().stopListening();
+                context.read<SearchCubit>().speechToText.stop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CategoriesScreen(),
+                  ),
+                );
+                CategoryCubit.get(context).readCategoriesName();
+              }
+                  : null,
+              onVerticalDragEnd: context.read<SearchCubit>().isListening
+                  ? context.read<SearchCubit>().isFavoritesEmpty()
+                  ? (DragEndDetails details) {
+                context.read<SearchCubit>().stopListening();
+                print('no books in favorite');
+                context.read<SearchCubit>().noBookFavorite();
+                context.read<SearchCubit>().searchingIcon = false;
+                context.read<SearchCubit>().text =
+                'لا يوجد كتب مفضلة حتى الآن';
+              }
+                  : (DragEndDetails details) {
+                context.read<SearchCubit>().stopListening();
+                print('yes there is books in favorite');
+                context.read<SearchCubit>().searchingIcon = false;
+                context.read<SearchCubit>().readTheFavorites();
+              }
+                  : null,
+              child: Container(
                 margin: const EdgeInsets.all(10),
                 width: double.infinity,
                 decoration: ShapeDecoration(
@@ -238,17 +263,19 @@ class _FirstScreenState extends State<FirstScreen> {
                       height: 170,
                     ),
                     Container(
-                      child: context.read<SearchCubit>().searchingIcon ? Lottie.asset(
-                        'assets/lotties/searching3.json',
-                        height: 280,
-                        width: 280,
-                        fit: BoxFit.fill,
-                      ) : Lottie.asset(
-                        'assets/lotties/click_here.json',
-                        height: 280,
-                        width: 280,
-                        fit: BoxFit.fill,
-                      ),
+                      child: context.read<SearchCubit>().searchingIcon
+                          ? Lottie.asset(
+                              'assets/lotties/searching3.json',
+                              height: 280,
+                              width: 280,
+                              fit: BoxFit.fill,
+                            )
+                          : Lottie.asset(
+                              'assets/lotties/click_here.json',
+                              height: 280,
+                              width: 280,
+                              fit: BoxFit.fill,
+                            ),
                     ),
                   ],
                 ),

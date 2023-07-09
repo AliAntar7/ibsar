@@ -188,8 +188,8 @@ class LoginCubit extends Cubit<LoginState> {
   FlutterTts ttsSayUseName = FlutterTts();
 
   void successRegister() async {
-    await ttsSayUseName.speak('تم إنشاء حساب بإسم $userName');
-    await ttsSayUseName.awaitSpeakCompletion(true);
+    await ttsSayUserID.speak('تم إنشاء حساب بإسم $userName');
+    await ttsSayUserID.awaitSpeakCompletion(true);
     await ttsSayUserID.speak('و رقم حسابك هو $userId');
     await ttsSayUserID.awaitSpeakCompletion(true);
     print(userId);
